@@ -1,0 +1,93 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<div class="container" id="sensors-form">
+  <div class="row" ng-show="sensor!=''">
+    <div class="col-sm-12">
+      <h1>{{aim}} Sensor</h1>
+    </div>
+    <div class="col-sm-12">
+      <form class="form" name="form" ng-submit="save(form)" validate>
+
+        <div class="form-group">
+          <label>Sensor name</label>
+
+          <input type="text" name="name" placeholder="Name" required class="form-control" ng-model="sensor.name"
+                 mongoose-error/>
+          <p class="help-block" ng-show="form.name.$error.mongoose">
+              {{ errors.other }}
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label>Sensor type</label>
+
+          <select name="type" class="form-control" ng-model="sensor.type" ng-change="resetType()">
+          	<option value="catch">Catch</option>
+          	<option value="reactive">Reactive</option>
+          	<option value="passive">Passive</option>
+          </select>    
+        </div>
+
+        <div class="form-group" ng-show="sensor.type == 'catch'">
+          <label>Sensor URL</label>
+
+          <input type="url" name="url" placeholder="URL" class="form-control" ng-model="sensor.url"/>
+          <p class="help-block"
+             ng-show="form.url.$error.url">
+            Must be a valid URL.
+          </p>
+        </div>
+
+        <div class="form-group" ng-show="sensor.type=='catch'">
+          <label>Refresh time</label>
+
+         <input type="number" name="r_time" placeholder="1" min="1" class="form-control" ng-model="sensor.r_time" />
+          <p class="help-block"
+             ng-show="form.r_time.$error.number || form.r_time.$error.min">
+            Must be a positive seconds number.
+          </p>
+        </div>
+
+        <div class="form-group" ng-show="sensor.type=='catch'">
+          <label>Variable to catch</label>
+          <div class="alert alert-warning">JSON param containing the desired value (Blank means URL response is the value itself). </div>
+         <input type="text" name="json-param" class="form-control" ng-model="sensor.opts.metric" />
+        </div>
+
+
+        <div class="form-group animate-show" ng-show="sensor.type=='reactive'" >
+          <label>Sensor model</label>
+
+          <select name="type" class="form-control" ng-model="sensor.opts.model">
+            <option value="">-- Device Type</option>
+            <option value="relayr">Relayr Wunderbar</option>
+          </select>    
+        </div>
+
+        <div class="form-group animate-show" ng-show="sensor.type=='reactive' && sensor.opts.model=='relayr'" >
+          <label>Relayr Options</label>
+
+          <input type="text" name="relayr-app" placeholder="APP ID" class="form-control" ng-model="sensor.opts.app" /><br />
+          <input type="text" name="relayr-device" placeholder="DEVICE ID" class="form-control" ng-model="sensor.opts.device" /><br />
+          <input type="text" name="relayr-token" placeholder="SENSOR TOKEN" class="form-control" ng-model="sensor.opts.token" /><br/>
+          <select name="metric" class="form-control" ng-model="sensor.opts.metric">
+            <option value="">-- Sensor metric</option>
+            <option value="hum">Humidity</option>
+            <option value="temp">Temperature</option>
+            <option value="snd_level">Noise</option>
+            <option value="clr">Color</option>
+            <option value="prox">Proximity</option>
+            <option value="light">Light</option>
+            <option value="accel">Accelerometer</option>
+            <option value="gyro">Gyros</option>
+          </select> 
+
+        </div>
+
+        <p class="help-block"> {{ message }} </p>
+
+        <button class="btn btn-lg btn-primary" type="submit">Save changes</button>
+      </form>
+    </div>
+  </div>
+</div>

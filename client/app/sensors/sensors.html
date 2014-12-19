@@ -1,0 +1,26 @@
+  <div ng-include="'components/navbar/navbar.html'"></div>
+
+<div class="container">
+<h1>Sensor List</h1><a ng-click="add()" class="add"><span class="glyphicon glyphicon-plus-sign pull-right"></span></a>
+<ul class="list-group">
+    <li class="list-group-item" ng-repeat="sensor in sensorList">
+
+        <div class="sensor-details">
+            <strong><a href="./sensors/view/{{sensor._id}}">{{sensor.name}}</a></strong>
+            <br/>
+            <span class="text-muted">User: <a href="mailto:{{sensor.usermail}}">{{sensor.username}}</a></span>
+        </div>
+
+        <div class="sensor-details">
+            <strong>Type</strong>
+            <br/>
+            <span class="text-muted">{{sensor.type}}</span>
+        </div>
+
+        <a ng-show="isSensorUser(sensor) || isAdmin" ng-click="delete(sensor)" class="trash"><span class="glyphicon glyphicon-trash pull-right"></span></a>
+        <a ng-show="isSensorUser(sensor) || isAdmin" ng-click="duplicate(sensor)" class="duplicate"><span class="glyphicon glyphicon-asterisk pull-right"></span></a>
+        <a ng-show="isSensorUser(sensor) || isAdmin" ng-click="edit(sensor)" class="editor"><span class="glyphicon glyphicon-edit pull-right"></span></a>
+    </li>
+  </ul>
+</div>
+ 

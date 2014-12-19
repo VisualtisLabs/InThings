@@ -1,0 +1,70 @@
+h1{
+	display: inline-block;
+}
+
+.glyphicon{
+	margin: 0 5px;
+	cursor: pointer !important;
+}
+
+.add{
+	display:inline-block;
+	margin-top:25px;
+	font-size: 30px;
+	margin-left: 10px;
+}
+
+.duplicate{
+	color: #7cde80;
+}
+
+.sensor-details{
+	margin-right: 20px;
+	display: inline-block;
+	min-width:	200px;
+}
+
+#sensors-detail{
+	ul{
+		list-style: none;
+		li{
+			strong{
+				
+				display: inline-block;
+			}
+		}
+	}
+
+	.tab-content{
+		margin-top: 30px;
+		margin-left: 30px;
+
+	input,select,textarea{
+		margin-bottom: 15px;
+	}
+
+	input,select{
+		height:25px;
+	}
+
+	input[type=checkbox]{
+		margin-left: 15px;
+		height: auto;
+		width: auto;
+	}
+	
+	}
+}
+
+.react-container{
+	background-color: #f8f8f8;
+	padding: 40px;
+	margin-top: 40px;
+}
+
+
+.nav-tabs{
+	margin-top:20px; 
+}
+
+

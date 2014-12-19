@@ -1,0 +1,126 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<div class="container" id="sensors-detail" ng-show="sensor!=''">
+	<h1>{{sensor.name}} - <a href="mailto:{{sensor.usermail}}">{{sensor.username}}</a></h1><br/>
+	
+	
+	<div class="col-sm-6">
+		<h2><i class="fa fa-eye"> Details</i></h2>
+		<div class="reactive-data" ng-show="sensor.type=='reactive'">
+			<ul>
+				<li><strong>Type:</strong><br/>{{sensor.type}}</li>
+				<li><strong>Model:</strong><br/>{{sensor.opts.model}}</li>
+				<li><strong>Metric:</strong><br/>{{sensor.opts.metric}}</li>
+				<li><strong>Created on</strong><br/>{{sensor.creationDate}}</li>
+				<li><strong>Created on</strong><br/>{{sensor.creationDate}}</li>
+			</ul>
+		</div>
+		<div class="catch-data" ng-show="sensor.type=='catch'">
+			<ul>
+				<li><strong>Type:</strong><br/>{{sensor.type}}</li>
+				<li><strong>Request URL:</strong><br/>{{sensor.url}}</li>
+				<li><strong>Refresh Time:</strong><br/>{{sensor.r_time}}</li>
+				<li><strong>JSON Param:</strong><br/>{{sensor.opts.param}}</li>
+			</ul>
+		</div>
+		<div class="passive-data" ng-show="sensor.type=='passive'">
+			<ul>
+				<li><strong>Type:</strong><br/>{{sensor.type}}</li>
+				<li><strong>URL for sending data (GET):</strong><br/>/api/values/update/{{sensor._id}}/$valueToSend</li>
+			</ul>
+		</div>
+
+	</div>
+
+	<div class="col-sm-6">
+		<h2><i class="fa fa-bar-chart"> Real-time Graph</i></h2>
+		<div google-chart chart="chartObject"></div>
+	</div>
+
+	<div class="col-sm-12 react-container">
+		<h2><i class="fa fa-gears"> Settings and Apps</i></h2>
+	  <tabset>
+	    <tab>
+	    	<tab-heading>
+	    		<i class='fa fa-fire'></i> React 
+	    	</tab-heading>
+	 		
+	 		<div class="col-sm-6">
+		 		<div class="form-group">
+					<label for="react-condition">Condition</label><br/>
+					<select id="react-condition" name="react-condition" ng-model="reactCondition" >
+						<option ng-selected="condition.val == reactCondition" ng-repeat="condition in reactConditions" value="{{condition.val}}">
+							{{condition.name}}
+						</option>
+					</select>
+				</div>
+				<div class="form-group" ng-hide="reactCondition==''">
+					<label for="react-limit">Limit value</label><br/>
+					<input type="text" id="react-limit" name="react-limit" ng-model="reactLimit" step="any" />
+				</div>
+			</div>
+			<div class="form-group col-sm-6" ng-hide="reactCondition==''">
+				<h3>Where alert will be sent?</h3>
+				<div class="react-destination-option">
+					<label>Email</label><input type="checkbox" ng-change="resetEmail()" ng-model="reactEmail.checked" /><br/>
+					<input ng-show="reactEmail.checked == true" placeholder="{{reactEmail.placeholder}}" type="email" ng-model="reactEmail.email" /><br/>
+					<textarea ng-show="reactEmail.checked == true" ng-model="reactEmail.message" placeholder="Contenido del mensaje">	
+					</textarea>
+				</div>
+				<div class="react-destination-option">
+					<label>Twitter</label><input type="checkbox" ng-change="resetTwitter()" ng-model="reactTwitter.checked" /><br/>
+					<div class="alert alert-warning" ng-show="reactTwitter.checked == true">Recuerde seguirnos en Twitter para poder recibir mensajes nuestros.</div>
+					<input ng-show="reactTwitter.checked == true" placeholder="{{reactTwitter.placeholder}}" type="text" ng-model="reactTwitter.user" /><br/>
+					<textarea ng-show="reactTwitter.checked == true" ng-model="reactTwitter.message" placeholder="Contenido del mensaje">	
+					</textarea>
+				</div>
+				<div class="react-destination-option">
+					<label>Request</label><input type="checkbox" ng-change="resetRequest()" ng-model="reactRequest.checked" /><br/>
+					<div class="alert alert-warning" ng-show="reactRequest.checked == true">For sending react value as parameter use "$r_val" in URL as: <i>'http://mycustomurl.com/?value=$r_val'</i></div>
+					<input ng-show="reactRequest.checked == true" placeholder="{{reactRequest.placeholder}}" type="url" ng-model="reactRequest.request" /><br/>
+				</div>
+			</div>
+			<button class="btn btn-lg btn-primary pull-right" ng-click='saveReact($event)'>Save changes</button>
+	    </tab>
+	    <tab>
+	      <tab-heading>
+	        <i class="fa-clock-o fa"></i> Time
+	      </tab-heading>
+	      <div class="alert alert-danger" ng-show="reactCondition==''">Please activate React conditions before setting time interval for alerts</div>
+	      <div class="form-group" ng-hide="reactCondition==''">
+			<label for="time-condition">Condition</label><br/>
+			<select id="time-condition" name="time-condition" ng-change="resetTime()" ng-model="timeCondition" >
+				<option ng-selected="(!timeCondition && $index==0) || (timeCondition && $index == 1 && sensor.react.timeStart==-1) || (timeCondition && $index == 2 && sensor.react.timeStart!=-1)" ng-repeat="condition in timeConditions" value="{{condition.val}}">
+					{{condition.name}}
+				</option>
+			</select>
+			<div ng-hide="timeCondition != 'bwn'">
+				<div id="start-time" class="col-sm-6">
+					<h4>Start time</h4>
+					<label for="time-condition">Start hour</label><br/>
+					<select id="start-time-hours" ng-change="updateEndHour(startTimeHours)" name="start-time-hours" ng-model="startTimeHours" >
+						<option value='-1'>
+							Select hour
+						</option>
+						<option ng-selected="hour.val == startTimeHours" ng-repeat="hour in hours" value="{{hour.val}}">
+							{{hour.val}}:00
+						</option>
+					</select>
+				</div>
+				<div id="end-time" class="col-sm-6" ng-hide="startTimeHours==''">
+					<h4>End time</h4>
+					<label for="time-condition">End hour</label><br/>
+					<select id="end-time-hours" name="end-time-hours" ng-model="endTimeHours" >
+						<option value='-1'>
+							Select an hour
+						</option>
+						<option ng-selected="hour.val == endTimeHours"  ng-repeat="hour in endHours" value="{{hour.val}}">
+							{{hour.val}}:59
+						</option>
+					</select>
+				</div>
+	      </div>
+	    </tab>
+	  </tabset>
+	</div>
+</div>	
