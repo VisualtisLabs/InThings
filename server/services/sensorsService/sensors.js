@@ -102,6 +102,13 @@ this.start = function(){
 		    		}
 		    	}
 
+		    	else if(sensor.type == "passive"){	
+		    		if(sensor.last_update == 0){
+		    			updateSensorLastTime(sensor);
+		    			updateValues(sensor);
+		    		}
+		    	}
+
 		    });
 
 		    if(go)
@@ -127,8 +134,15 @@ var catchData = function(sensor){
 }
 
 var updateSensorLastTime = function(sensor){
-	var d = new Date();
-	sensor.last_update = d.getTime();
+	if(sensor.type == "catch"){
+		var d = new Date();
+		sensor.last_update = d.getTime();
+	}
+
+	if(sensor.type == "passive"){
+		sensor.last_update = 1;
+	}
+
 	var id = sensor._id;
 	
 	var sensorClone = JSON.parse(JSON.stringify(sensor.toObject()));
@@ -169,9 +183,13 @@ var updateValues = function(sensor, val){
 						body.values = [];
 						body.times = [];
 					}
+					if(sensor.type == 'passive')
+						val = body.values[body.values.length-1];
 
-					if(sensor.type == 'react')
+
 						checkReact(sensor,val);
+
+					if(sensor!= 'passive'){
 
 					body.values.push(val);
 					body.times.push(date);
@@ -184,6 +202,7 @@ var updateValues = function(sensor, val){
 					    if(err) { console.log("ERROR ACTUALIZANDO VALOR: "+err); }
 					    return true;
 					  });
+				}
 
 				}
 
@@ -279,20 +298,20 @@ var checkReact = function(sensor,val){
 
 		switch(react.type){
 			case "gt" : 
-				if(val > react.value && react.lastNotice <= react.value){
+				if(parseFloat(val) > parseFloat(react.value) && react.lastNotice <= react.value){
 					console.log("Aviso mayor que...");
 					sendReact(react,val);
 				}	
 			break;
 			case "lt" : 
-				if(val < react.value && react.lastNotice >= react.value){
+				if(parseFloat(val) < parseFloat(react.value) && react.lastNotice >= react.value){
 					console.log("Aviso menor que...");
 					sendReact(react,val);
 				}	
 			break;
 			case "eq" : 
-				if(val == react.value && ((react.lastNotice < react.value) || (react.lastNotice > react.value))){
-					console.log("Aviso igual que...");
+				if(parseFloat(val) == parseFloat(react.value) && ((react.lastNotice < react.value) || (react.lastNotice > react.value))){
+					console.console.log(message);("Aviso igual que...");
 					sendReact(react,val);
 				}	
 			break;

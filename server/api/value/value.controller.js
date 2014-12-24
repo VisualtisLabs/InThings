@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var Value = require('./value.model');
+var http = require('request');
 
 // Get list of values
 exports.index = function(req, res) {
@@ -70,6 +71,12 @@ exports.updateSensorDateValues = function(req, res) {
       });
 
     }
+
+    http.get("http://localhost:9000/api/sensors/zeroUpdate/"+req.params.sensor, function(error, response, body){
+      if(!error){
+        console.log("updated to 0 sensor: "+req.params.sensor);
+      }
+    });
 
   });
 };

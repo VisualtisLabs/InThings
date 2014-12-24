@@ -47,6 +47,22 @@ exports.show = function(req, res) {
   });
 };
 
+// Set passive sensor last_update to 0
+exports.setZeroUpdate = function(req, res) {
+  Sensors.findById(req.params.id, function (err, sensors) {
+    if(err) { return handleError(res, err); }
+    if(!sensors) { return res.send(404); }
+    if(sensors.type == "passive"){
+      sensors.last_update = 0;
+      sensors.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.send(200);
+    });
+    }
+    return res.json(sensors);
+  });
+};
+
 // Creates a new sensors in the DB.
 exports.create = function(req, res) {
   //Keep last value at 0; 
